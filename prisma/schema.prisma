@@ -1,0 +1,344 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model dang_ky {
+  id                 Int       @id @default(autoincrement())
+  masv               Int
+  ma_lop_hoc_phan    String?   @db.VarChar(50)
+  id_lop_hp          Int?
+  ma_hoc_phan        String?   @db.VarChar(50)
+  ten_hoc_phan       String?   @db.VarChar(255)
+  nhom               String?   @db.VarChar(50)
+  waited             Boolean?  @default(false)
+  ly_do              String?   @db.VarChar(512)
+  loai_dang_ky       Int
+  dot_dang_ky        Int?
+  hoc_ky             Int?
+  status             Boolean   @default(true)
+  ghi_chu            String    @db.VarChar(255)
+  trang_thai         Boolean
+  he_thong           String?   @db.MediumText
+  da_gui             Boolean?
+  created_at         DateTime  @default(now()) @db.Timestamp(0)
+  updated_at         DateTime  @default(now()) @db.DateTime(0)
+  approved_at        DateTime? @db.DateTime(0)
+  deadline_at        DateTime? @db.DateTime(0)
+  auto_reverted_at   DateTime? @db.DateTime(0)
+  auto_revert_reason String?   @db.VarChar(255)
+
+  @@index([ma_lop_hoc_phan], map: "idx_dangky_ma_lhp")
+  @@index([masv, dot_dang_ky], map: "idx_dangky_masv_dot")
+  @@index([trang_thai, deadline_at], map: "idx_trangthai_deadline")
+  @@index([loai_dang_ky], map: "loaidangky_ibfk")
+  @@index([masv], map: "masv_ibfk")
+}
+
+model dang_ky_child {
+  id         Int    @id @default(autoincrement())
+  id_dang_ky Int
+  ma_nhom    String @db.VarChar(50)
+}
+
+model dot_dang_ky {
+  id            Int       @id @default(autoincrement())
+  ten_dot       String    @db.VarChar(255)
+  hoc_ky        Int
+  nam           Int
+  ngay_bat_dau  DateTime? @db.Date
+  ngay_ket_thuc DateTime? @db.Date
+  mo_dang_ky    DateTime? @db.Date
+  dong_dang_ky  DateTime? @db.Date
+  loai_dot      String    @db.VarChar(20)
+  isActive      Boolean   @default(true)
+
+  @@index([hoc_ky], map: "hocky_ibfk")
+}
+
+model gmail_opt {
+  id         Int      @id @default(autoincrement())
+  email      String   @db.VarChar(50)
+  otp        Int
+  created_at DateTime @default(now()) @db.Timestamp(0)
+}
+
+model hoc_ky {
+  mahk       Int    @id @default(autoincrement())
+  ten_hoc_ky String @db.VarChar(100)
+}
+
+model hoc_phan {
+  id                Int      @id @default(autoincrement())
+  ten_hoc_phan      String   @db.VarChar(255)
+  so_tin_chi        Int
+  created_at        DateTime @default(now()) @db.Timestamp(0)
+  updated_at        DateTime @default(now()) @db.Timestamp(0)
+  ly_thuyet         Int      @default(0)
+  so_tiet_ly_thuyet Int?
+  so_tiet_thuc_hanh Int?
+  ma_hoc_phan       String   @db.VarChar(50)
+  dot_dang_ky       Int?
+  loai_dang_ky      Int?
+  gia_tien          Int?     @default(0)
+  parent            String?  @db.VarChar(50)
+  alert_hp          String?  @db.VarChar(255)
+
+  @@unique([ma_hoc_phan, dot_dang_ky], map: "idx_mahp_iddotdk")
+  @@index([dot_dang_ky], map: "dot_dang_ky")
+}
+
+model huy_dang_ky {
+  id            Int      @id @default(autoincrement())
+  masv          Int
+  ma_hoc_phan   String?  @db.VarChar(50)
+  ten_hoc_phan  String?  @db.VarChar(255)
+  dot_dang_ky   Int?
+  loai_dang0_ky Int?
+  hoc0_ky       Int?
+  ly_do         String   @db.VarChar(255)
+  he_thong      String   @db.Text
+  trang_thai    Boolean
+  ghi_chu       String   @db.VarChar(255)
+  cccd_mt       String?  @db.VarChar(255)
+  cccd_ms       String?  @db.VarChar(255)
+  created_at    DateTime @default(now()) @db.Timestamp(0)
+  updated_at    DateTime @default(now()) @db.Timestamp(0)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model kq_cdr {
+  id      Int     @id @default(autoincrement())
+  masv    Int
+  anh_van Int?    @db.TinyInt
+  tin_hoc Int?    @db.TinyInt
+  knm     Int?    @db.TinyInt
+  knnn    Int?    @db.TinyInt
+  vstep   Int?    @db.TinyInt
+  avc1    Int?    @db.TinyInt
+  pvb1    Int?    @db.TinyInt
+  khoa    String? @db.VarChar(256)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model kq_cdr_chi_tiet {
+  id         Int                       @id @default(autoincrement())
+  masv       Int
+  loai_cdr   kq_cdr_chi_tiet_loai_cdr?
+  ten        String?                   @db.VarChar(128)
+  trang_thai Boolean?
+}
+
+model lich_hoc {
+  id              Int       @id @default(autoincrement())
+  lop_hoc_phan_id String    @db.VarChar(50)
+  dot_dang_ky     Int?
+  tuan_hoc        Int?      @db.SmallInt
+  ngay_hoc        DateTime  @db.Date
+  tiet_hoc        String    @db.VarChar(16)
+  phong_hoc       String?   @db.VarChar(50)
+  nhom_hoc        String?   @db.VarChar(50)
+  ghi_chu         String?   @db.VarChar(512)
+  created_at      DateTime? @default(now()) @db.DateTime(0)
+  updated_at      DateTime? @default(now()) @db.DateTime(0)
+
+  @@unique([lop_hoc_phan_id, ngay_hoc, tiet_hoc, phong_hoc], map: "uq_lich")
+}
+
+model loai_dang_ky {
+  id         Int      @id @default(autoincrement())
+  ten_loai   String   @db.VarChar(255)
+  ghi_chu    String   @db.VarChar(500)
+  isActive   Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamp(0)
+  updated_at DateTime @default(now()) @db.Timestamp(0)
+}
+
+model logs {
+  id             BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  service_name   String   @db.VarChar(100)
+  action         String   @db.VarChar(100)
+  user_id        BigInt?
+  reference_id   String?  @db.VarChar(255)
+  reference_type String?  @db.VarChar(100)
+  status         String   @default("SUCCESS") @db.VarChar(50)
+  message        String?  @db.Text
+  metadata       Json?
+  created_at     DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([action])
+  @@index([created_at])
+  @@index([reference_type])
+  @@index([service_name])
+  @@index([status])
+  @@index([user_id])
+}
+
+model lop_hoc_phan {
+  id              Int                     @id @default(autoincrement())
+  ma_lop_hoc_phan String                  @db.VarChar(50)
+  ma_hoc_phan     String                  @db.VarChar(50)
+  ten_hien_thi    String?                 @db.VarChar(128)
+  bat_dau         DateTime?               @db.Date
+  ket_thuc        DateTime?               @db.Date
+  so_luong        Int?
+  phong_hoc       String?                 @db.VarChar(100)
+  created_at      DateTime                @default(now()) @db.Timestamp(0)
+  updated_at      DateTime                @default(now()) @db.Timestamp(0)
+  so_luong_toi_da Int?
+  lop_du_kien     String?                 @db.VarChar(50)
+  xep_lich        Int                     @default(0)
+  lich_hoc        String?                 @db.Text
+  dot_dang_ky     Int?
+  so_luong_temp   Int?                    @default(0)
+  trang_thai      lop_hoc_phan_trang_thai @default(dbgenerated("1"))
+  gia_tien        Int?
+
+  @@unique([ma_lop_hoc_phan, dot_dang_ky], map: "unique_lophocphan")
+  @@index([ma_lop_hoc_phan], map: "ma_lop_hoc_phan")
+}
+
+model patch_note {
+  pn_id      Int       @id @default(autoincrement())
+  pn_title   String    @db.VarChar(50)
+  pn_version String    @db.VarChar(15)
+  pn_slug    String    @db.VarChar(20)
+  pn_content String    @db.VarChar(500)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+  deleted_at DateTime? @db.Timestamp(0)
+}
+
+model permissions {
+  id              Int       @id @default(autoincrement())
+  permission_name String    @db.VarChar(255)
+  permission_code String    @db.VarChar(255)
+  parent          Int
+  icon            String?   @db.VarChar(225)
+  created_at      DateTime  @default(now()) @db.Timestamp(0)
+  updated_at      DateTime  @default(now()) @db.Timestamp(0)
+  deleted_at      DateTime? @db.Timestamp(0)
+}
+
+model roles {
+  id         Int       @id @default(autoincrement())
+  role_name  String    @db.VarChar(255)
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  updated_at DateTime  @default(now()) @db.Timestamp(0)
+  deleted_at DateTime? @db.Timestamp(0)
+}
+
+model roles_permissions {
+  role_id       Int
+  permission_id Int
+
+  @@id([role_id, permission_id])
+}
+
+model sinh_vien {
+  masv         Int       @id
+  ho_ten       String    @db.VarChar(100)
+  ngay_sinh    String?   @db.VarChar(20)
+  noi_sinh     String?   @db.VarChar(255)
+  gioi_tinh    String?   @db.VarChar(100)
+  cccd         String?   @db.VarChar(100)
+  email        String?   @db.VarChar(100)
+  dien_thoai   String?   @db.VarChar(12)
+  lop          String?   @db.VarChar(20)
+  dangnhap_0st Boolean
+  cccd_mt      String?   @db.VarChar(255)
+  cccd_ms      String?   @db.VarChar(255)
+  created_at   DateTime? @default(now()) @db.DateTime(0)
+  updated_at   DateTime? @default(now()) @db.DateTime(0)
+  threadId     String?   @db.VarChar(255)
+}
+
+model temp_hphan {
+  id              Int                  @id @default(autoincrement())
+  masv            Int?
+  info_coursename String?              @db.VarChar(255)
+  info_courseid   String               @db.VarChar(50)
+  dotdk           Int?
+  sotc            Int?                 @db.TinyInt
+  hinhthuc        temp_hphan_hinhthuc?
+  created_date    DateTime             @default(now()) @db.Timestamp(0)
+}
+
+model thanh_toan {
+  id              BigInt                 @id @unique @default(autoincrement()) @db.UnsignedBigInt
+  dang_ky_id      Int
+  ma_lop_hoc_phan String                 @db.VarChar(255)
+  ma_nhom         String?                @db.VarChar(255)
+  phuong_thuc     thanh_toan_phuong_thuc
+  trang_thai      thanh_toan_trang_thai
+  ma_giao_dich    String                 @db.VarChar(255)
+  ngay_thanh_toan DateTime?              @db.Timestamp(0)
+  created_at      DateTime               @db.Timestamp(0)
+  updated_at      DateTime               @default(now()) @db.Timestamp(0)
+  qr              String?                @db.Text
+}
+
+model thong_bao {
+  id         Int      @id @default(autoincrement())
+  tieu_de    String?  @db.VarChar(100)
+  noi_dung   String?  @db.VarChar(500)
+  created_at DateTime @default(now()) @db.Timestamp(0)
+  updated_at DateTime @default(now()) @db.Timestamp(0)
+  is_show    Boolean
+}
+
+model users {
+  id              Int      @id @default(autoincrement())
+  magv            String?  @db.VarChar(225)
+  firstname       String?  @db.VarChar(255)
+  lastname        String   @db.VarChar(255)
+  username        String   @db.VarChar(255)
+  password        String   @db.VarChar(255)
+  email           String   @db.VarChar(255)
+  phone           String?  @db.VarChar(12)
+  avatar          String   @default("uploads/avatars/dapulse_default_photo.png") @db.VarChar(255)
+  status          Boolean?
+  roles_id        Int
+  department_id   Int?
+  created_at      DateTime @default(now()) @db.Timestamp(0)
+  updated_at      DateTime @default(now()) @db.Timestamp(0)
+  department_name String?  @db.VarChar(255)
+}
+
+enum kq_cdr_chi_tiet_loai_cdr {
+  anh_van
+  tin_hoc
+  KNM
+  knnn
+  vstep
+  avc1
+  pvb1
+}
+
+enum thanh_toan_phuong_thuc {
+  QR
+  CASH
+  TRANSFER
+}
+
+enum thanh_toan_trang_thai {
+  DONE
+  WAIT
+  CANCEL
+}
+
+enum temp_hphan_hinhthuc {
+  thuchanh
+  lythuyet
+  thuctap
+}
+
+enum lop_hoc_phan_trang_thai {
+  ACTIVE @map("1")
+  INACTIVE @map("0")
+}
