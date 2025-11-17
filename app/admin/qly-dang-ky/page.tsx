@@ -19,7 +19,8 @@ import type { BulkAction } from '@/components/admin/DropdownMenu';
 
 export default function RegistrationsPage() {
     const router = useRouter();
-    const { rows, rowCount, loading, query, setQuery, paginationModel, setPaginationModel, sortModel, setSortModel } = useRegistrations();
+    const { rows, rowCount, loading, query, setQuery,
+        paginationModel, setPaginationModel, sortModel, setSortModel } = useRegistrations();
     const [selectedCount, setSelectedCount] = useState(0);
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -94,6 +95,7 @@ export default function RegistrationsPage() {
             <ShareToolbar
                 query={query}
                 onQueryChange={setQuery}
+                searchOnEnter={true}
                 onAdd={() => alert('TODO: mở dialog thêm đăng ký')}
                 placeholder="Tìm (mã SV/mã HP/tên HP/nhóm)"
                 addLabel="Thêm đăng ký"

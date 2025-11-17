@@ -1,6 +1,6 @@
 'use client';
 import { Box, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SharedDataGrid from '@/components/admin/SharedDataGrid';
 import ShareToolbar from '@/components/admin/ShareToolbar';
 import { studentColumns } from '@/features/students/columns';
@@ -34,7 +34,8 @@ export default function StudentsPage() {
     const [openColumnDialog, setOpenColumnDialog] = useState(false);
     const handleOpenColumnDialog = () => setOpenColumnDialog(true);
     const handleCloseColumnDialog = () => setOpenColumnDialog(false);
-    const { rows, rowCount, loading, query, setQuery, paginationModel, setPaginationModel, sortModel, setSortModel, filterModel, setFilterModel } = useStudents();
+    const { rows, rowCount, loading, query, setQuery, paginationModel, 
+        setPaginationModel, sortModel, setSortModel, filterModel, setFilterModel } = useStudents();
     const [selectedCount, setSelectedCount] = useState(0);
 
 
@@ -91,8 +92,9 @@ export default function StudentsPage() {
             <ShareToolbar
                 query={query}
                 onQueryChange={setQuery}
+                searchOnEnter={true}
                 onAdd={() => alert('TODO: mở dialog tạo sinh viên')}
-                placeholder="Tìm (mã/tên/email/lớp/CCCD/điện thoại)"
+                placeholder="Tìm (mã/tên/email/lớp/CCCD/điện thoại) - Nhấn Enter để tìm"
                 addLabel="Thêm sinh viên"
                 showExport={true}
                 onExport={() => alert('TODO: xuất danh sách sinh viên')}
@@ -103,7 +105,6 @@ export default function StudentsPage() {
                 selectedCount={selectedCount}
                 onShowColumnDialog={handleOpenColumnDialog}
                 showColumnDialogLabel="Cột"
-
             />
 
             {/* DataGrid Container */}

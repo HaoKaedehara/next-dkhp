@@ -3,6 +3,11 @@ import type { GridColDef } from '@mui/x-data-grid';
 import { Chip } from '@mui/material';
 import { DangKy, HuyDangKy } from './types';
 
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import React from 'react';
+
 const fmtDate = (v: unknown) => {
     if (!v) return '';
     try { return new Date(String(v)).toLocaleString(); } catch { return String(v); }
@@ -13,9 +18,27 @@ const fmtBoolean = (value: boolean | null) => {
     return value ? 'Có' : 'Không';
 };
 
+const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: '#f5f5f9',
+        color: 'rgba(0, 0, 0, 0.87)',
+        maxWidth: 220,
+        fontSize: theme.typography.pxToRem(12),
+        border: '1px solid #dadde9',
+    },
+}));
+
 export const dangKyColumns: GridColDef<DangKy>[] = [
-    { field: 'id', headerName: 'ID', type: 'number', minWidth: 80, flex: 0.3, sortable: true },
-    { field: 'masv', headerName: 'Mã SV', type: 'number', minWidth: 110, flex: 0.5, sortable: true },
+    {
+        field: 'id', headerName: 'ID', type: 'number', minWidth: 80, flex: 0.3, sortable: true,
+        renderCell: (p) => (<>{p.value}</>),
+    },
+    {
+        field: 'masv', headerName: 'Mã SV', type: 'number', minWidth: 110, flex: 0.5, sortable: true,
+        renderCell: (p) => (<>{p.value}</>),
+    },
     { field: 'ma_lop_hoc_phan', headerName: 'Mã LHP', minWidth: 130, flex: 0.7, sortable: true },
     { field: 'ma_hoc_phan', headerName: 'Mã HP', minWidth: 120, flex: 0.6, sortable: true },
     { field: 'ten_hoc_phan', headerName: 'Tên học phần', minWidth: 250, flex: 1.2, sortable: true },
@@ -30,11 +53,11 @@ export const dangKyColumns: GridColDef<DangKy>[] = [
         flex: 0.4,
         type: 'boolean',
         renderCell: (p) => (
-            <Chip 
-                size="small" 
-                variant="outlined" 
-                color={p.value ? 'warning' : 'default'} 
-                label={fmtBoolean(p.value)} 
+            <Chip
+                size="small"
+                variant="outlined"
+                color={p.value ? 'warning' : 'default'}
+                label={fmtBoolean(p.value)}
             />
         ),
     },
@@ -45,11 +68,11 @@ export const dangKyColumns: GridColDef<DangKy>[] = [
         flex: 0.6,
         type: 'boolean',
         renderCell: (p) => (
-            <Chip 
-                size="small" 
-                variant="outlined" 
-                color={p.value ? 'success' : 'error'} 
-                label={p.value ? 'Hoạt động' : 'Không hoạt động'} 
+            <Chip
+                size="small"
+                variant="outlined"
+                color={p.value ? 'success' : 'error'}
+                label={p.value ? 'Hoạt động' : 'Không hoạt động'}
             />
         ),
     },
@@ -60,11 +83,11 @@ export const dangKyColumns: GridColDef<DangKy>[] = [
         flex: 0.8,
         type: 'boolean',
         renderCell: (p) => (
-            <Chip 
-                size="small" 
-                variant="outlined" 
-                color={p.value ? 'success' : 'default'} 
-                label={p.value ? 'Kích hoạt' : 'Tắt'} 
+            <Chip
+                size="small"
+                variant="outlined"
+                color={p.value ? 'success' : 'default'}
+                label={p.value ? 'Kích hoạt' : 'Tắt'}
             />
         ),
     },
@@ -75,16 +98,31 @@ export const dangKyColumns: GridColDef<DangKy>[] = [
         flex: 0.5,
         type: 'boolean',
         renderCell: (p) => (
-            <Chip 
-                size="small" 
-                variant="outlined" 
-                color={p.value ? 'info' : 'default'} 
-                label={fmtBoolean(p.value)} 
+            <Chip
+                size="small"
+                variant="outlined"
+                color={p.value ? 'info' : 'default'}
+                label={fmtBoolean(p.value)}
             />
         ),
     },
-    { field: 'ly_do', headerName: 'Lý do', minWidth: 200, flex: 1, sortable: false },
-    { field: 'ghi_chu', headerName: 'Ghi chú', minWidth: 200, flex: 1, sortable: false },
+    { field: 'ly_do', headerName: 'Lý do', minWidth: 200, flex: 1, sortable: true },
+    {
+        field: 'ghi_chu', headerName: 'Ghi chú', minWidth: 200, flex: 1, sortable: true,
+        renderCell: (p) => (
+            <>
+                <HtmlTooltip
+                    title={
+                        <React.Fragment>
+                            <Typography color="inherit">{p.value}</Typography>
+                        </React.Fragment>
+                    }
+                >
+                    <Typography>{p.value}</Typography>
+                </HtmlTooltip>
+            </>
+        )
+    },
     { field: 'created_at', headerName: 'Tạo lúc', minWidth: 160, flex: 0.8, valueFormatter: (params) => fmtDate(params?.value), sortable: true },
     { field: 'updated_at', headerName: 'Cập nhật', minWidth: 160, flex: 0.8, valueFormatter: (params) => fmtDate(params?.value), sortable: true },
     { field: 'approved_at', headerName: 'Duyệt lúc', minWidth: 160, flex: 0.8, valueFormatter: (params) => fmtDate(params?.value), sortable: true },
@@ -106,11 +144,11 @@ export const huyDangKyColumns: GridColDef<HuyDangKy>[] = [
         flex: 0.6,
         type: 'boolean',
         renderCell: (p) => (
-            <Chip 
-                size="small" 
-                variant="outlined" 
-                color={p.value ? 'success' : 'error'} 
-                label={p.value ? 'Đã duyệt' : 'Chờ duyệt'} 
+            <Chip
+                size="small"
+                variant="outlined"
+                color={p.value ? 'success' : 'error'}
+                label={p.value ? 'Đã duyệt' : 'Chờ duyệt'}
             />
         ),
     },

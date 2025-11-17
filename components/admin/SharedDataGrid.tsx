@@ -49,7 +49,7 @@ function Pagination({
     const currentPage = page + 1;
 
     return (
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%', px: 2 }}>
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ width: 'auto', px: 2 }}>
             {/* Previous button */}
             <Typography
                 component="span"
@@ -258,7 +258,7 @@ export type SharedDataGridProps<T extends GridValidRowModel = GridValidRowModel>
 // });
 
 
-export default function SharedDataGrid<T extends GridValidRowModel = GridValidRowModel>({
+const SharedDataGrid = React.memo(function SharedDataGrid<T extends GridValidRowModel = GridValidRowModel>({
     rows,
     columns,
     rowCount,
@@ -360,16 +360,20 @@ export default function SharedDataGrid<T extends GridValidRowModel = GridValidRo
                     },
                 }}
 
-                /* Custom slots (v8+ API) */
-                // slots={{
-                //     toolbar: () => <CustomToolbarWithSelection
-                //         toolbarConfig={toolbarConfig}
-                //         selectedCount={selectedCount}
-                //         bulkActions={bulkActions}
-                //         enableFilter={enableFilter}
-                //     />,
-                // }}
+            /* Custom slots (v8+ API) */
+            // slots={{
+            //     toolbar: () => <CustomToolbarWithSelection
+            //         toolbarConfig={toolbarConfig}
+            //         selectedCount={selectedCount}
+            //         bulkActions={bulkActions}
+            //         enableFilter={enableFilter}
+            //     />,
+            // }}
             />
         </Box>
     );
-}
+}) as <T extends GridValidRowModel = GridValidRowModel>(
+    props: SharedDataGridProps<T>
+) => React.JSX.Element;
+
+export default SharedDataGrid;

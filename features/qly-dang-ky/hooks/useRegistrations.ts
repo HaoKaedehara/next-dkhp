@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import type { GridPaginationModel, GridSortModel } from "@mui/x-data-grid";
-import type { DangKy } from "../types";
+import type { DangKy } from "../types"; import { useDebounce } from 'use-debounce';
 
 export function useRegistrations() {
     const [rows, setRows] = useState<DangKy[]>([]);
@@ -14,18 +14,23 @@ export function useRegistrations() {
 
     const [actualQuery, setActualQuery] = useState("");
 
+    const [searchDebounce] = useDebounce(query, 300)
+
     // Effect để handle debounced search
     useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            setActualQuery(query);
-            // Reset về trang 0 khi search
-            if (query !== actualQuery) {
-                setPaginationModel(prev => ({ ...prev, page: 0 }));
-            }
-        }, 300);
+        // const timeoutId = setTimeout(() => {
+        //     setActualQuery(query);
+        //     // Reset về trang 0 khi search
+        //     if (query !== actualQuery) {
+        //         setPaginationModel(prev => ({ ...prev, page: 0 }));
+        //     }
+        // }, 300);
 
-        return () => clearTimeout(timeoutId);
-    }, [query]);
+        // return () => clearTimeout(timeoutId);
+
+        console.log("searchDebounce", searchDebounce);
+
+    }, [searchDebounce]);
 
     useEffect(() => {
         let off = false;
@@ -35,9 +40,9 @@ export function useRegistrations() {
             const url = new URL("/api/registrations", window.location.origin);
             url.searchParams.set("page", String(paginationModel.page));
             url.searchParams.set("pageSize", String(paginationModel.pageSize));
-            if (actualQuery) url.searchParams.set("query", actualQuery);
+            if (searchDebounce) url.searchParams.set("query", searchDebounce);
             if (s) { url.searchParams.set("sortField", s.field); url.searchParams.set("sortDir", s.sort!); }
-            
+
             try {
                 const res = await fetch(url.toString(), { cache: "no-store" });
                 const { rows, total } = await res.json();
@@ -48,7 +53,7 @@ export function useRegistrations() {
             }
         })();
         return () => { off = true; };
-    }, [paginationModel, sortModel, actualQuery]);
+    }, [paginationModel, sortModel, searchDebounce]);
 
     return { rows, rowCount, loading, query, setQuery, paginationModel, setPaginationModel, sortModel, setSortModel };
 }

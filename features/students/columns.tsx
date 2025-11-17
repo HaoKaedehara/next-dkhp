@@ -12,7 +12,7 @@ const fmtDate = (v: unknown) => {
 
 
 export const studentColumns: GridColDef<SinhVien>[] = [
-    {
+    {   
         field: 'masv', headerName: 'Mã SV', type: 'number', minWidth: 110, flex: 0.5, sortable: true,
         renderCell: (p) => (<>{p.value}</>),
     },

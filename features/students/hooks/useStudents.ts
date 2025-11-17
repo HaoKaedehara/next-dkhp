@@ -20,6 +20,8 @@ export function useStudents() {
         return () => clearTimeout(timeoutId);
     }, [query]);
 
+
+
     const [actualQuery, setActualQuery] = useState("");
 
     // Effect để handle debounced search
@@ -45,12 +47,12 @@ export function useStudents() {
             url.searchParams.set("pageSize", String(paginationModel.pageSize));
             if (actualQuery) url.searchParams.set("query", actualQuery);
             if (s) { url.searchParams.set("sortField", s.field); url.searchParams.set("sortDir", s.sort!); }
-            
+
             // Thêm filter params
             if (filterModel.items.length > 0) {
                 url.searchParams.set("filterModel", JSON.stringify(filterModel));
             }
-            
+
             const res = await fetch(url.toString(), { cache: "no-store" });
             const { rows, total } = await res.json();
             if (!off) { setRows(rows); setRowCount(total); setLoading(false); }
@@ -59,15 +61,15 @@ export function useStudents() {
     }, [paginationModel, sortModel, actualQuery, filterModel]);
 
 
-    return { 
-        rows, 
-        rowCount, 
-        loading, 
-        query, 
-        setQuery, 
-        paginationModel, 
-        setPaginationModel, 
-        sortModel, 
+    return {
+        rows,
+        rowCount,
+        loading,
+        query,
+        setQuery,
+        paginationModel,
+        setPaginationModel,
+        sortModel,
         setSortModel,
         filterModel,
         setFilterModel,
