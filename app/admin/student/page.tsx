@@ -21,6 +21,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 
+import SinhVienFormDialog from "./studentForm";
+
 
 export default function StudentsPage() {
 
@@ -34,9 +36,13 @@ export default function StudentsPage() {
     const [openColumnDialog, setOpenColumnDialog] = useState(false);
     const handleOpenColumnDialog = () => setOpenColumnDialog(true);
     const handleCloseColumnDialog = () => setOpenColumnDialog(false);
-    const { rows, rowCount, loading, query, setQuery, paginationModel, 
+    const { rows, rowCount, loading, query, setQuery, paginationModel,
         setPaginationModel, sortModel, setSortModel, filterModel, setFilterModel } = useStudents();
     const [selectedCount, setSelectedCount] = useState(0);
+    const [openForm, setOpenForm] = useState(false);
+
+    const handleOpen = () => setOpenForm(true);
+    const handleClose = () => setOpenForm(false);
 
 
     // State cho model hiển thị cột
@@ -93,7 +99,7 @@ export default function StudentsPage() {
                 query={query}
                 onQueryChange={setQuery}
                 searchOnEnter={true}
-                onAdd={() => alert('TODO: mở dialog tạo sinh viên')}
+                onAdd={() => handleOpen()}
                 placeholder="Tìm (mã/tên/email/lớp/CCCD/điện thoại) - Nhấn Enter để tìm"
                 addLabel="Thêm sinh viên"
                 showExport={true}
@@ -159,6 +165,13 @@ export default function StudentsPage() {
                 columnOrder={columnOrder}
                 onOrderChange={setColumnOrder}
             />
+
+
+            {/* Dialog chứa form thêm sinh viên */}
+            <SinhVienFormDialog open={open} onClose={handleClose} />
+
         </Box>
+
+
     );
 }
